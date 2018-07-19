@@ -160,7 +160,7 @@ $RemoteScriptGroup = "EpicRemoteStartupScript"
 $RemoteTestScriptGroup = "EpicRemoteTestStartupScript"
 $InProdgroup = Get-ADGroupMember -identity $RemoteScriptGroup
 $InTestgroup = Get-ADGroupMember -identity $RemoteTestScriptGroup
-if (($InProdgroup.name -contains $Server) -And ($Envir -eq 'p'))
+if ($InProdgroup.name -contains $Server)
 {
 	# Run Remote Script
 	$Scriptname = $RemoteScriptName
