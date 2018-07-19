@@ -1,3 +1,5 @@
+#######################################################
+# by DW 7/18/18
 # Startup Script for EPIC PVS Servers
 # To help configure PVS image to the right environment
 #######################################################
@@ -24,11 +26,11 @@ function copyfile($p, $f)
 		try
 		{	
 			Copy-Item "$p\$f.Prod" -Destination "$p\$f" -Force -Confirm:$False -EA Stop
-			WriteEventLog $ScriptName 'Information' "Prod - Copied $p\$f.prod to C:\$p\$f"
+			WriteEventLog $ScriptName 'Information' "Prod - Copied $p\$f.prod to $p\$f"
 		}
 		catch
 		{
-			WriteEventLog $ScriptName 'Error' "Prod - Failed to copy $p\$f.prod to C:\$p\$f"
+			WriteEventLog $ScriptName 'Error' "Prod - Failed to copy $p\$f.prod to $p\$f"
 		}		
 	}
 	else
@@ -36,11 +38,11 @@ function copyfile($p, $f)
 		try
 		{	
 			Copy-Item "$p\$f.Test" -Destination "$p\$f" -Force -Confirm:$False -EA Stop
-			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.prod to C:\$p\$f"
+			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.prod to $p\$f"
 		}
 		catch
 		{
-			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.prod to C:\$p\$f"
+			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.prod to $p\$f"
 		}		
 	}
 }
@@ -53,11 +55,11 @@ function copyfolder($p, $f)
 		{	
 			if (Test-Path $p\$f){Remove-Item -Force -Recurse -Path $p\$f -EA 0 | Out-Null}
 			Copy-Item "$p\$f.Prod" -Destination "$p\$f" -Force -Recurse -Confirm:$False -EA Stop
-			WriteEventLog $ScriptName 'Information' "Prod - Copied $p\$f.prod to C:\$p\$f"	
+			WriteEventLog $ScriptName 'Information' "Prod - Copied $p\$f.prod to $p\$f"	
 		}
 		catch
 		{
-			WriteEventLog $ScriptName 'Error' "Prod - Fail to copy $p\$f.prod to C:\$p\$f"	
+			WriteEventLog $ScriptName 'Error' "Prod - Fail to copy $p\$f.prod to $p\$f"	
 		}		
 	}
 	else
@@ -66,11 +68,11 @@ function copyfolder($p, $f)
 		{		
 			if (Test-Path $p\$f){Remove-Item -Force -Recurse -Path $p\$f -EA 0 | Out-Null}
 			Copy-Item "$p\$f.Test" -Destination "$p\$f" -Force -Recurse -Confirm:$False -EA Stop
-			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.prod to C:\$p\$f"	
+			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.prod to $p\$f"	
 		}
 		catch
 		{
-			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.prod to C:\$p\$f"	
+			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.prod to $p\$f"	
 		}		
 	}
 }
@@ -106,7 +108,7 @@ New-EventLog –LogName Application –Source $Scriptname -EA 0
 
 switch ($envir){
 "D" {
-	$RemoteScriptPath = "\\YourServer\startupscript$"
+	$RemoteScriptPath = "\\sctxedgt014003\startupscript$"
 	$RemoteScriptName = "RemoteStartupScript"
 	$RemoteTestScriptName = "RemoteStartupTestScript"
 	$Prod = $False
@@ -114,7 +116,7 @@ switch ($envir){
 	Write-Verbose "Hi from Dev"
   }
 "Q" {
-	$RemoteScriptPath = "\\YourServer\startupscript$"
+	$RemoteScriptPath = "\\sctxedgt014003\startupscript$"
 	$RemoteScriptName = "RemoteStartupScript"
 	$RemoteTestScriptName = "RemoteStartupTestScript"
 	$Prod = $False
@@ -122,7 +124,7 @@ switch ($envir){
 	Write-Verbose "Hi from QA"
   }
 "P" {
-	$RemoteScriptPath = "\\YourServer\startupscript$"
+	$RemoteScriptPath = "\\sctxedgt014003\startupscript$"
 	$RemoteScriptName = "RemoteStartupScript"  
 	$RemoteTestScriptName = "RemoteStartupTestScript"
 	$Prod = $True
@@ -149,26 +151,26 @@ copyfile 'C:\Program Files (x86)\Hyland\Integration for Epic\Viewer' 'Epicintegr
 #copyfolder 'c:\Program Files (x86)' 'epicstuff'
 
 # WriteReg $RegKey, $RegName, $RegProdvalue, $RegTestvalue
-#Writereg "HKLM:\SOFTWARE\SomeKey\Test" 'Testing' 'Prod' 'Test'
+#Writereg "HKLM:\SOFTWARE\MSNYUHEALTH\Test" 'Testing' 'Prod' 'Test'
 
 #=====================================================================================
 #-------------------------------------------------------------------------------------
 # Below is for running one-off updates. Servername has to be in the appropriate group 
 #-------------------------------------------------------------------------------------
 WaitforNetwork
-$RemoteScriptGroup = "EpicRemoteStartupScript"
 $RemoteTestScriptGroup = "EpicRemoteTestStartupScript"
-$InProdgroup = Get-ADGroupMember -identity $RemoteScriptGroup
 $InTestgroup = Get-ADGroupMember -identity $RemoteTestScriptGroup
-if ($InProdgroup.name -contains $Server)
-{
-	# Run Remote Script
-	$Scriptname = $RemoteScriptName
-	. $RemoteScriptPath\$RemoteScriptName.ps1
-}
+
+# Run RemoteTestScript if in EpicRemoteTestStartupScript group
 if ($InTestgroup.name -contains $Server)
-{
+{	
+	# Needed for testing remotescript before all servers run it.
 	# Run Remote Test Script
 	$Scriptname = $RemoteTestScriptName
 	. $RemoteScriptPath\$RemoteTestScriptName.ps1
+}
+else
+{ # Run RemoteScript
+	$Scriptname = $RemoteScriptName
+	. $RemoteScriptPath\$RemoteScriptName.ps1
 }
