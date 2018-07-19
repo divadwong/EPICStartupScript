@@ -108,7 +108,7 @@ New-EventLog –LogName Application –Source $Scriptname -EA 0
 
 switch ($envir){
 "D" {
-	$RemoteScriptPath = "\\sctxedgt014003\startupscript$"
+	$RemoteScriptPath = "\\Yourserver\startupscript$"
 	$RemoteScriptName = "RemoteStartupScript"
 	$RemoteTestScriptName = "RemoteStartupTestScript"
 	$Prod = $False
@@ -116,7 +116,7 @@ switch ($envir){
 	Write-Verbose "Hi from Dev"
   }
 "Q" {
-	$RemoteScriptPath = "\\sctxedgt014003\startupscript$"
+	$RemoteScriptPath = "\\Yourserver\startupscript$"
 	$RemoteScriptName = "RemoteStartupScript"
 	$RemoteTestScriptName = "RemoteStartupTestScript"
 	$Prod = $False
@@ -124,7 +124,7 @@ switch ($envir){
 	Write-Verbose "Hi from QA"
   }
 "P" {
-	$RemoteScriptPath = "\\sctxedgt014003\startupscript$"
+	$RemoteScriptPath = "\\Yourserver\startupscript$"
 	$RemoteScriptName = "RemoteStartupScript"  
 	$RemoteTestScriptName = "RemoteStartupTestScript"
 	$Prod = $True
