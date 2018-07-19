@@ -38,11 +38,11 @@ function copyfile($p, $f)
 		try
 		{	
 			Copy-Item "$p\$f.Test" -Destination "$p\$f" -Force -Confirm:$False -EA Stop
-			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.prod to $p\$f"
+			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.test to $p\$f"
 		}
 		catch
 		{
-			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.prod to $p\$f"
+			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.test to $p\$f"
 		}		
 	}
 }
@@ -68,11 +68,11 @@ function copyfolder($p, $f)
 		{		
 			if (Test-Path $p\$f){Remove-Item -Force -Recurse -Path $p\$f -EA 0 | Out-Null}
 			Copy-Item "$p\$f.Test" -Destination "$p\$f" -Force -Recurse -Confirm:$False -EA Stop
-			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.prod to $p\$f"	
+			WriteEventLog $ScriptName 'Information' "Test - Copied $p\$f.test to $p\$f"	
 		}
 		catch
 		{
-			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.prod to $p\$f"	
+			WriteEventLog $ScriptName 'Error' "Test - Fail to copy $p\$f.test to $p\$f"	
 		}		
 	}
 }
@@ -83,7 +83,7 @@ function Writereg($RegKey, $RegName, $RegProdValue, $RegTestValue)
 	{
 		try
 		{	
-			Set-ItemProperty -path $RegKey -name $RegName -value $RegProdValue
+			Set-ItemProperty -path $RegKey -name $RegName -value $RegProdValue -EA Stop
 			WriteEventLog $ScriptName 'Information' "$RegKey\$RegName set to $RegProdValue"
 		}
 		catch
@@ -93,7 +93,7 @@ function Writereg($RegKey, $RegName, $RegProdValue, $RegTestValue)
 	{
 		try
 		{	
-			Set-ItemProperty -path $RegKey -name $RegName -value $RegTestValue
+			Set-ItemProperty -path $RegKey -name $RegName -value $RegTestValue -EA Stop
 			WriteEventLog $ScriptName 'Information' "$RegKey\$RegName set to $RegTestValue"
 		}
 		catch
